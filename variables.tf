@@ -2,9 +2,12 @@ variable "aws_region" {
   default = "eu-west-1"
 }
 
-variable "aws_subnet" {
-  type = list
-  default =  ["eu-west-1a_snid", "eu-west-1b_snid"]
+variable "aws_subnet_web" {
+  default =  ["subnet-d18f60b5", "subnet-0a85917d"]
+}
+
+variable "aws_subnet_app" {
+  default =  ["subnet-d18f60b5", "subnet-0a85917d"]
 }
 
 variable "identifier" {

@@ -1,9 +1,5 @@
 #Being built with TF0.7.9
 
-variable "aws_region" {
-  default = "eu-west-1"
-}
-
 provider "aws" {
   region                   = "${var.aws_region}"
   shared_credentials_file  = "/home/ben/.aws/pers"
@@ -89,7 +85,7 @@ resource "aws_s3_bucket" "bucket" {
 resource "aws_elb" "web" {
   name = "terraform-web-elb"
 
-  subnets = ["${var.aws_subnet.default.id}"]
+  subnets = ["${var.aws_subnet_web}"]
 
   access_logs {
     bucket = "benh_elb_logging_bucket"
@@ -104,12 +100,20 @@ resource "aws_elb" "web" {
     lb_port           = 80
     lb_protocol       = "http"
   }
+
+  health_check {
+    healthy_threshold = 2
+    unhealthy_threshold = 2
+    timeout = 3
+    target = "HTTP:80/"
+    interval = 30
+  }
 }
 
 resource "aws_elb" "app" {
   name = "terraform-app-elb"
 
-  subnets = ["${var.aws_subnet.default.id}"]
+  subnets = ["${var.aws_subnet_app}"]
 
   access_logs {
     bucket = "benh_elb_logging_bucket"
@@ -124,13 +128,21 @@ resource "aws_elb" "app" {
     lb_port           = 80
     lb_protocol       = "http"
   }
+
+  health_check {
+    healthy_threshold = 2
+    unhealthy_threshold = 2
+    timeout = 3
+    target = "HTTP:80/"
+    interval = 30
+  }
+
 }
 
 resource "aws_db_instance" "development" {
   identifier             = "${var.identifier}"
   allocated_storage      = "${var.storage}"
   engine                 = "${var.engine}"
-  engine_version         = "${lookup(var.engine_version, var.engine)}"
   instance_class         = "${var.instance_class}"
   name                   = "${var.db_name}"
   username               = "${var.username}"
@@ -150,4 +162,12 @@ resource "aws_dynamodb_table" "sessions-dynamodb-table" {
     name = "session"
     type = "b"
   }
+}
+
+output "Web DNS Name" {
+  value = "${aws_elb.web.name}"
+}
+
+output "AppServer DNS Name" {
+  value = "${aws_elb.app.name}"
 }
