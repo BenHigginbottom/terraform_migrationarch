@@ -58,4 +58,6 @@ resource "aws_asg" "my_web_asg" {
 
 This only shows one as they both resemble each other.
 
-The first line states the availability zones we want to stretch the ASG across, in this case A&B of EU-WEST-1
+The first line states the availability zones we want to stretch the ASG across, in this case A&B of EU-WEST-1.
+
+Min and Max sizes give us the ability to control the size of the ASG, mimimum 

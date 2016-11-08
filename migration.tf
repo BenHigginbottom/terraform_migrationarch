@@ -26,20 +26,20 @@ data "aws_ami" "list" {
 resource "aws_launch_configuration" "my_web_launch_config" {
     name          = "web_config"
     image_id      = "${data.aws_ami.list.id}"
-    instance_type = "m3.medium"
+    instance_type = "t2.micro"
     user_data     = "${file("webuserdata.sh")}"
 }
 
 resource "aws_launch_configuration" "my_app_launch_config" {
     name          = "app_config"
     image_id      = "${data.aws_ami.list.id}"
-    instance_type = "m4.large"
+    instance_type = "t2.micro"
     user_data     = "${file("appuserdata.sh")}"
 
 }
 
 
-resource "aws_asg" "my_web_asg" {
+resource "aws_autoscaling_group" "my_web_asg" {
   availability_zones          = ["eu-west-1a", "eu-west-1b"]
   name                        = "my_autoscaling_webservers"
   max_size                    = 4
@@ -47,7 +47,7 @@ resource "aws_asg" "my_web_asg" {
   health_check_grace_period   = 300
   health_check_type           = "ELB"
   desired_capacity            = 3
-  loadbalancers               = ["${aws_elb.web.name}"]
+  load_balancers               = ["${aws_elb.web.name}"]
   launch_configuration        = "${aws_launch_configuration.my_web_launch_config.name}"
 
   tag {
@@ -57,7 +57,7 @@ resource "aws_asg" "my_web_asg" {
   }
 }
 
-resource "aws_asg" "my_app_asg" {
+resource "aws_autoscaling_group" "my_app_asg" {
   availability_zones        = ["eu-west-1a", "eu-west-1b"]
   name                      = "my_autoscaling_appservers"
   max_size                  = 4
@@ -65,7 +65,7 @@ resource "aws_asg" "my_app_asg" {
   health_check_grace_period = 300
   health_check_type         = "ELB"
   desired_capacity          = 3
-  loadbalancers             = ["${aws_elb.app.name}"]
+  load_balancers             = ["${aws_elb.app.name}"]
   launch_configuration      = "${aws_launch_configuration.my_app_launch_config.name}"
 
   tag {

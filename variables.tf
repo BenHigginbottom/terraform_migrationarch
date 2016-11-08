@@ -19,12 +19,12 @@ variable "storage" {
 }
 
 variable "engine" {
-  default     = "aurora"
+  default     = "mysql"
   description = "Not Oracle because $$$$$"
 }
 
 variable "instance_class" {
-  default     = "db.r3.large"
+  default     = "db.t2.large"
 }
 
 variable "dbkms" {
