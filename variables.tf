@@ -19,21 +19,17 @@ variable "storage" {
 }
 
 variable "engine" {
-  default     = "mysql"
+  default     = "aurora"
   description = "Not Oracle because $$$$$"
 }
 
-variable "engine_version" {
-  description = "Engine version"
-
-  default = {
-    mysql    = "5.6.22"
-    postgres = "9.4.1"
-  }
+variable "instance_class" {
+  default     = "db.r3.large"
 }
 
-variable "instance_class" {
-  default     = "db.m4.large"
+variable "dbkms" {
+  default = "foo"
+  description = "ARN of KMS key for encrypting the database"
 }
 
 variable "db_name" {
