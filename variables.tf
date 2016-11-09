@@ -10,6 +10,10 @@ variable "aws_subnet_app" {
   default =  ["subnet-d18f60b5", "subnet-0a85917d"]
 }
 
+variable "aws_subnet_db" {
+  default =  ["subnet-d18f60b5", "subnet-0a85917d"]
+}
+
 variable "identifier" {
   default     =  "benhdb-rds"
 }
@@ -38,6 +42,10 @@ variable "db_name" {
 
 variable "username" {
   default     = "myuser"
+}
+
+variable "aws_snet_db" {
+  default = "main"
 }
 
 variable "password" {

@@ -76,7 +76,7 @@ resource "aws_autoscaling_group" "my_app_asg" {
 }
 
 resource "aws_s3_bucket" "bucket" {
-    bucket  = "benh_elb_logging_bucket"
+    bucket  = "benhelbloggingbucket081116"
     acl     = "private"
 
     tags {
@@ -91,7 +91,7 @@ resource "aws_elb" "web" {
   subnets  = ["${var.aws_subnet_web}"]
 
   access_logs {
-    bucket        = "benh_elb_logging_bucket"
+    bucket        = "benhelbloggingbucket081116"
     bucket_prefix = "web"
     interval      = 60
   }
@@ -119,7 +119,7 @@ resource "aws_elb" "app" {
   subnets           = ["${var.aws_subnet_app}"]
 
   access_logs {
-    bucket        = "benh_elb_logging_bucket"
+    bucket        = "benhelbloggingbucket081116"
     bucket_prefix = "app"
     interval      = 60
   }
@@ -142,6 +142,15 @@ resource "aws_elb" "app" {
 
 }
 
+resource "aws_db_subnet_group" "default" {
+  name = "main"
+  subnet_ids = ["${var.aws_snet_db}"]
+  tags {
+    Terraformed = "True"
+  }
+  
+}
+
 resource "aws_db_instance" "development" {
   identifier                  = "${var.identifier}"
   allocated_storage           = "${var.storage}"
@@ -158,6 +167,7 @@ resource "aws_db_instance" "development" {
   backup_window               = "0330-0400"
   backup_retention_period     = "30"
   kms_key_id                  = "${var.dbkms}"
+  db_subnet_group_name        = "${aws_db_subnet_group.default.id}"
 
 }
 
@@ -172,9 +182,10 @@ resource "aws_dynamodb_table" "sessions-dynamodb-table" {
   }
   attribute {
     name = "session"
-    type = "b"
+    type = "B"
   }
 }
+
 
 output "Web DNS Name" {
   value = "${aws_elb.web.name}"
